@@ -141,4 +141,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('scroll', showModalByScroll);
+
+    // Классы для карточек 
+
+    class MenuItem {
+        constructor(selector, img, alt, subtitle, descr, price, current, convert) {
+            this.img = img;
+            this.alt = alt;
+            this.subtitle = subtitle;
+            this.descr = descr;
+            this.price = price;
+            this.convert = convert;
+            this.parentSelector = document.querySelector(selector);
+            this.price = this.convertPriseFromTo(current, convert);
+        }
+
+        render() {
+            this.parentSelector.children[0].insertAdjacentHTML('beforeend', `
+                <div class="menu__item">
+                    <img src="${this.img}" alt="${this.alt}">
+                    <h3 class="menu__item-subtitle">Меню "${this.subtitle}"</h3>
+                    <div class="menu__item-descr">${this.descr}</div>
+                    <div class="menu__item-divider"></div>
+                        <div class="menu__item-price">
+                        <div class="menu__item-cost">Цена:</div>
+                        <div class="menu__item-total"><span>${this.price} </span> ${this.convert}/день</div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        convertPriseFromTo(current, convert) {
+            let index;
+            const convertValues = {
+                USD: 80,
+                RUB: 1,
+                EU: 90,
+                FR: 100,
+                GR: 2 
+            };
+            if(convertValues[current] < convertValues[convert]) {
+                index = convertValues[current]/convertValues[convert];
+            } else if (convertValues[current] >= convertValues[convert]){
+                index = convertValues[convert]/convertValues[current];
+            } else {
+                return this.price.toFixed(2);
+            }
+            return (this.price*index).toFixed(2);
+        }
+    }
+
+    const fitnesMenu = new MenuItem('.menu__field', 'img/tabs/vegy.jpg', 'vegy', 'Фитнес', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 20, 'USD', 'EU');
+    const premMenu = new MenuItem('.menu__field', 'img/tabs/elite.jpg', 'vegy', 'Фитнес', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 50, 'USD', 'EU');
+    const postMenu = new MenuItem('.menu__field', 'img/tabs/post.jpg', 'vegy', 'Фитнес', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 70, 'USD', 'EU');
+    fitnesMenu.render();
+    premMenu.render();
+    postMenu.render();
 });

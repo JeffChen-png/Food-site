@@ -2,8 +2,10 @@
     padding: 40px 0 50px 0;
     .container {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-evenly;
         align-items: flex-start;
+        flex-wrap: wrap;
+        row-gap: 20px;
     }
     .title {
         text-align: center;
