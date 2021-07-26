@@ -1,12 +1,11 @@
 {
   "name": "food",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "JeffChen-png",
   "license": "ISC",
   "browserslist": [
     "last 2 chrome versions",
@@ -23,9 +22,19 @@
     "gulp-clean-css": "^4.2.0",
     "gulp-postcss": "^8.0.0",
     "gulp-sass": "^5.0.0",
+    "json-server": "^0.16.3",
     "sass": "^1.35.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-stream": "^5.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeffChen-png/Food-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JeffChen-png/Food-site/issues"
+  },
+  "homepage": "https://github.com/JeffChen-png/Food-site#readme",
+  "description": ""
 }

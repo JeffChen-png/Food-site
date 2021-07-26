@@ -170,34 +170,27 @@ window.addEventListener('DOMContentLoaded', () => {
                 </div>
             `);
         }
-        
-        convertPriseFromTo(current, convert) {
+
+        convertPriseFromTo(current = undefined, convert = undefined) {
             let index;
             const convertValues = {
                 USD: 80,
                 RUB: 1,
                 EU: 90,
                 FR: 100,
-                GR: 2 
+                GR: 2
             };
-            if(convertValues[current] < convertValues[convert]) {
-                index = convertValues[current]/convertValues[convert];
-            } else if (convertValues[current] >= convertValues[convert]){
-                index = convertValues[convert]/convertValues[current];
+            if (convertValues[current] < convertValues[convert]) {
+                index = convertValues[current] / convertValues[convert];
+            } else if (convertValues[current] >= convertValues[convert]) {
+                index = convertValues[convert] / convertValues[current];
             } else {
+                this.convert = 'грн';
                 return this.price.toFixed(2);
             }
-            return (this.price*index).toFixed(2);
+            return (this.price * index).toFixed(2);
         }
     }
-
-    const fitnesMenu = new MenuItem('.menu__field', 'img/tabs/vegy.jpg', 'vegy', 'Фитнес', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 20, 'USD', 'EU');
-    const premMenu = new MenuItem('.menu__field', 'img/tabs/elite.jpg', 'vegy', 'Фитнес', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 50, 'USD', 'EU');
-    const postMenu = new MenuItem('.menu__field', 'img/tabs/post.jpg', 'vegy', 'Фитнес', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 70, 'USD', 'EU');
-    
-    fitnesMenu.render();
-    premMenu.render();
-    postMenu.render();
 
     // обработка форм
 
@@ -210,10 +203,10 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -227,14 +220,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             form.append(statusMessage);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-
             const formData = new FormData(form);
-
-            request.send(formData);
-
-            // request.setRequestHeader('Content-type', 'application/json'); // для json
 
             // const object = {};
 
@@ -242,29 +228,49 @@ window.addEventListener('DOMContentLoaded', () => {
             //     object[key] = value;
             // });
 
-            // const json = JSON.stringify(object); // для json
-            // request.send(json);
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
+            postData('http://localhost:3000/requests', json)
+                .then(data => {
+                    console.log(data);
                     showThanksModal(message.success);
                     form.reset();
                     statusMessage.remove();
-                } else {
+                }).catch(() => {
                     showThanksModal(message.failed);
-                }
-            });
-
+                }).finally(() => {
+                    form.reset();
+                });
         });
     }
+
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json(); // async - await - для создания очереди выполнения 
+    };
+
+    const getData = async (url) => {
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Ошибка получения данных ${res.status}, ${url}`);
+        }
+        return await res.json();
+    };
 
     function showThanksModal(message) {
         const prevModalDialog = document.querySelector('.modal__dialog');
 
         prevModalDialog.classList.add('hide');
         showModal();
-        
+
         const thanksModal = document.createElement('div');
         thanksModal.classList.add('modal__dialog');
         thanksModal.innerHTML = `
@@ -281,4 +287,22 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal(modal);
         }, 4000);
     }
+
+    // fetch('http://localhost:3000/menu')
+    //     .then(data => data.json())
+    //     .then(res => console.log(res));
+
+    getData('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({
+                img,
+                altimg,
+                title,
+                descr,
+                price
+            }) => {
+                new MenuItem('.menu__field', img, altimg, title, descr, price).render();
+            });
+        });
+
 });
