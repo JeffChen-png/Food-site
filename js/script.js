@@ -221,16 +221,27 @@ window.addEventListener('DOMContentLoaded', () => {
             form.append(statusMessage);
 
             const formData = new FormData(form);
-
             // const object = {};
 
             // formData.forEach(function (value, key) {
             //     object[key] = value;
             // });
 
-            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+            // const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            postData('http://localhost:3000/requests', json)
+            // postData('http://localhost:3000/requests', json)
+            //     .then(data => {
+            //         console.log(data);
+            //         showThanksModal(message.success);
+            //         form.reset();
+            //         statusMessage.remove();
+            //     }).catch(() => {
+            //         showThanksModal(message.failed);
+            //     }).finally(() => {
+            //         form.reset();
+            //     });
+
+            axios.post('http://localhost:3000/requests', Object.fromEntries(formData.entries()))
                 .then(data => {
                     console.log(data);
                     showThanksModal(message.success);
@@ -244,17 +255,18 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: data
-        });
 
-        return await res.json(); // async - await - для создания очереди выполнения 
-    };
+    // const postData = async (url, data) => {
+    //     const res = await fetch(url, {
+    //         method: "POST",
+    //         headers: {
+    //             'Content-type': 'application/json'
+    //         },
+    //         body: data
+    //     });
+
+    //     return await res.json(); // async - await - для создания очереди выполнения 
+    // };
 
     const getData = async (url) => {
         const res = await fetch(url);
@@ -292,9 +304,10 @@ window.addEventListener('DOMContentLoaded', () => {
     //     .then(data => data.json())
     //     .then(res => console.log(res));
 
-    getData('http://localhost:3000/menu')
+
+    axios.get('http://localhost:3000/menu')
         .then(data => {
-            data.forEach(({
+            data.data.forEach(({
                 img,
                 altimg,
                 title,
@@ -305,4 +318,317 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+    // getData('http://localhost:3000/menu')
+    //     .then(data => {
+    //         data.forEach(({
+    //             img,
+    //             altimg,
+    //             title,
+    //             descr,
+    //             price
+    //         }) => {
+    //             new MenuItem('.menu__field', img, altimg, title, descr, price).render();
+    //         });
+    //     });
+
+    // Slider 
+
+    const prev = document.querySelector('.offer__slider-prev'),
+        slider = document.querySelector('.offer__slider'),
+        next = document.querySelector('.offer__slider-next'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total'),
+        slides = document.querySelectorAll('.offer__slide'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesInner = document.querySelector('.offer__slider-inner'),
+        slideWidth = window.getComputedStyle(slides[0]).width,
+        prevImg = prev.querySelector('img'),
+        nextImg = next.querySelector('img');
+
+    function showDots(slider, slides) {
+        slider.style.position = 'relative';
+
+        const dots = document.createElement('ol');
+
+        dots.classList.add('carousel-indicators');
+        dots.style.cssText = `
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 15;
+            display: flex;
+            justify-content: center;
+            margin-right: 15%;
+            margin-left: 15%;
+            list-style: none;
+        `;
+
+        slider.append(dots);
+
+        for (let i = 0; i < slides.length; i++) {
+            const dot = document.createElement('li');
+            dot.setAttribute('data-slide-to', i + 1);
+            dot.style.cssText = `
+                box-sizing: content-box;
+                flex: 0 1 auto;
+                width: 30px;
+                height: 6px;
+                margin-right: 3px;
+                margin-left: 3px;
+                cursor: pointer;
+                background-color: #fff;
+                background-clip: padding-box;
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent;
+                opacity: .5;
+                transition: opacity .6s ease;
+            `;
+
+            if (i == (+current.textContent - 1)) {
+                dot.style.opacity = 1;
+            }
+
+            dots.append(dot);
+        }
+    }
+
+    function dotPassive(element) {
+        element.style.opacity = 0.5;
+    }
+
+    function dotActive(element) {
+        element.style.opacity = 1;
+    }
+
+    // дописать
+
+    function dotsChanging(current) {
+        const dots = document.querySelector('.carousel-indicators');
+
+        dots.addEventListener('click', (event) => {
+
+            for (let index = 0; index < slides.length; index++) {
+                dotPassive(dots.children[index]);
+            }
+
+            if (event.target.tagName == 'LI') {
+                current.textContent = event.target.getAttribute('data-slide-to');
+                addZeros(current);
+                dotActive(event.target);
+            }
+        });
+
+        current.addEventListener('DOMSubtreeModified', () => {
+
+            for (let index = 0; index < slides.length; index++) {
+                dotPassive(dots.children[index]);
+            }
+
+            const currentObj = document.querySelector(`[data-slide-to="${+current.textContent}"]`);
+            dotActive(currentObj);
+        });
+    }
+
+    function addZeros(item) {
+        if (+item.textContent < 10) {
+            item.textContent = `0${item.textContent}`;
+        }
+    }
+
+    function showSlide(index) {
+        slides[index].classList.add('show');
+        slides[index].classList.remove('hide');
+    }
+
+    function hideSlide(index) {
+        slides[index].classList.add('hide');
+        slides[index].classList.remove('show');
+    }
+
+    function setSlideVisibility(slides, currentIndex, total) {
+        for (let i = 0; i < slides.length; i++) {
+            hideSlide(i)
+        }
+
+        showSlide(currentIndex - 1);
+
+        total.textContent = slides.length;
+        addZeros(total);
+    }
+
+    function slideChange(slides, currentObjectPointer) {
+
+        next.addEventListener('click', () => {
+            let index = +currentObjectPointer.textContent;
+
+            hideSlide(index - 1);
+
+            if (index == slides.length) {
+                index = 0;
+            }
+
+            showSlide(index);
+
+            currentObjectPointer.textContent = index + 1;
+            addZeros(currentObjectPointer);
+        });
+
+        prev.addEventListener('click', () => {
+            let index = +currentObjectPointer.textContent;
+
+            hideSlide(index - 1);
+
+            if (index == 1) {
+                index = slides.length + 1;
+            }
+
+            showSlide(index - 2);
+
+            currentObjectPointer.textContent = index - 1;
+            addZeros(currentObjectPointer);
+        });
+
+        currentObjectPointer.addEventListener('DOMSubtreeModified', () => {
+
+            for (let index = 0; index < slides.length; index++) {
+                hideSlide(index);
+            }
+
+            showSlide(+currentObjectPointer.textContent - 1);
+
+        });
+    }
+
+    function setCarouselVisibility(slidesWrapper, slidesInner) {
+        slidesWrapper.style.overflow = 'hidden';
+        slidesInner.style.width = 100 * slides.length + `%`;
+        slidesInner.style.display = 'flex';
+        slidesInner.style.transition = '.5s all';
+    }
+
+    function carouselChange(slides, currentObjectPointer, slidesInner, slideWidth) {
+
+        slidesInner.style.transform = `translateX(-${slideWidth * (+currentObjectPointer.textContent - 1)}px)`;
+
+        document.querySelector('.offer__slider-counter').addEventListener('click', (event) => {
+            if ((event.target.contains(next) || event.target.contains(nextImg)) || (event.target.contains(prev) || event.target.contains(prevImg))) {
+                let index = +currentObjectPointer.textContent;
+
+                if (event.target.contains(next) || event.target.contains(nextImg)) {
+                    index++;
+                }
+
+                if (event.target.contains(prev) || event.target.contains(prevImg)) {
+                    index--;
+                }
+
+                if (index > slides.length) {
+                    index = 1;
+                }
+
+                if (index < 1) {
+                    index = slides.length;
+                }
+
+                slidesInner.style.transform = `translateX(-${slideWidth * (index - 1)}px)`;
+
+                currentObjectPointer.textContent = index;
+                addZeros(currentObjectPointer);
+            }
+        });
+
+        currentObjectPointer.addEventListener('DOMSubtreeModified', () => {
+            let index = +currentObjectPointer.textContent;
+
+            if (index > slides.length) {
+                index = 1;
+            }
+
+            if (index < 1) {
+                index = slides.length;
+            }
+            slidesInner.style.transform = `translateX(-${slideWidth * (index - 1)}px)`;
+
+        });
+    }
+
+    // setSlideVisibility(slides, +current.textContent, total);
+    // slideChange(slides, current);
+
+    setCarouselVisibility(slidesWrapper, slidesInner);
+    carouselChange(slides, current, slidesInner, slideWidth.replace(/\D/g, ''));
+
+    showDots(slider, slides, current);
+    dotsChanging(current);
+
+    // Калькулятор
+
+    const result = document.querySelector('.calculating__result span');
+    let sex = 'female',
+        height, weight, age, ratio = 1.375;
+
+    function calcTotal() {
+
+        if (!height || !weight || !age) {
+            result.textContent = 'Ошибка ввода данных';
+            return;
+        }
+
+        if (sex == 'female') {
+            result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+        } else {
+            result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
+        }
+    }
+
+    function getStaticInfo(parentElem, activeClass) {
+        const parent = document.querySelector(parentElem);
+        const elements = parent.querySelectorAll('div');
+
+        elements.forEach(element => {
+            element.addEventListener('click', (event) => {
+                if (event.target.getAttribute('data-ratio')) {
+                    ratio = event.target.getAttribute('data-ratio');
+                } else if (event.target.getAttribute('id')) {
+                    sex = event.target.getAttribute('id');
+                }
+
+                elements.forEach(item => {
+                    item.classList.remove(activeClass);
+                });
+
+                event.target.classList.add(activeClass);
+                calcTotal();
+            });
+        });
+    }
+
+    function getDynamicInfo(selector) {
+        const input = document.querySelector(selector);
+
+        input.addEventListener('input', (event) => {
+            switch (input.getAttribute('id')) {
+                case 'height':
+                    height = +input.value;
+                    break;
+                case 'weight':
+                    weight = +input.value;
+                    break;
+                case 'age':
+                    age = +input.value;
+                    break;
+            }
+            calcTotal();
+        });
+    }
+
+    calcTotal();
+
+    getDynamicInfo('#height');
+    getDynamicInfo('#weight');
+    getDynamicInfo('#age');
+
+    getStaticInfo('#gender', 'calculating__choose-item_active');
+    getStaticInfo('.calculating__choose_big', 'calculating__choose-item_active');
 });
