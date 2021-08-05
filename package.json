@@ -24,17 +24,8 @@
     "gulp-sass": "^5.0.0",
     "json-server": "^0.16.3",
     "sass": "^1.35.1",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-stream": "^5.2.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JeffChen-png/Food-site.git"
-  },
-  "bugs": {
-    "url": "https://github.com/JeffChen-png/Food-site/issues"
-  },
-  "homepage": "https://github.com/JeffChen-png/Food-site#readme",
-  "description": ""
+    "webpack": "^5.48.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-stream": "^6.1.2"
+  }
 }
