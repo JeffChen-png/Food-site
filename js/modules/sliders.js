@@ -1,13 +1,15 @@
-function sliders() {
+function sliders({sliderContainerSelector, prevSelector, nextSelector, currentSelector, totalSelector, slideSelector, slidesWrapperSelector, slidesInnerSelector}) {
+
+    // дописать свойства 
 
     // Slider 
 
     const prev = document.querySelector('.offer__slider-prev'),
-        slider = document.querySelector('.offer__slider'),
+        slider = document.querySelector('.offer__slider'), //sliderContainerSelector
         next = document.querySelector('.offer__slider-next'),
         current = document.querySelector('#current'),
         total = document.querySelector('#total'),
-        slides = document.querySelectorAll('.offer__slide'),
+        slides = document.querySelectorAll('.offer__slide'), //slideSelector
         slidesWrapper = document.querySelector('.offer__slider-wrapper'),
         slidesInner = document.querySelector('.offer__slider-inner'),
         slideWidth = window.getComputedStyle(slides[0]).width,

@@ -22,6 +22,6 @@ window.addEventListener('DOMContentLoaded', () => {
     forms(modalTimerId);
     modals('.modal', '[data-modal]', modalTimerId);
     sliders();
-    tabs();
+    tabs('.tabheader__item', '.tabcontent','.tabheader__items', 'tabheader__item_active');
     timers();
 });
