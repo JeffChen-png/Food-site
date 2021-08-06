@@ -21,7 +21,17 @@ window.addEventListener('DOMContentLoaded', () => {
     cards();
     forms(modalTimerId);
     modals('.modal', '[data-modal]', modalTimerId);
-    sliders();
-    tabs('.tabheader__item', '.tabcontent','.tabheader__items', 'tabheader__item_active');
+    sliders({
+        prevSelector: '.offer__slider-prev',
+        nextSelector: '.offer__slider-next',
+        sliderContainerSelector: '.offer__slider',
+        currentSelector: '#current',
+        totalSelector: '#total',
+        slideSelector: '.offer__slide',
+        slidesWrapperSelector: '.offer__slider-wrapper',
+        slidesInnerSelector: '.offer__slider-inner',
+
+    });
+    tabs('.tabheader__item', '.tabcontent', '.tabheader__items', 'tabheader__item_active');
     timers();
 });

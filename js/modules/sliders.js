@@ -1,17 +1,26 @@
-function sliders({sliderContainerSelector, prevSelector, nextSelector, currentSelector, totalSelector, slideSelector, slidesWrapperSelector, slidesInnerSelector}) {
+function sliders({
+    sliderContainerSelector,
+    prevSelector,
+    nextSelector,
+    currentSelector,
+    totalSelector,
+    slideSelector,
+    slidesWrapperSelector,
+    slidesInnerSelector
+}) {
 
-    // дописать свойства 
+    // дописать свойства ~
 
     // Slider 
 
-    const prev = document.querySelector('.offer__slider-prev'),
-        slider = document.querySelector('.offer__slider'), //sliderContainerSelector
-        next = document.querySelector('.offer__slider-next'),
-        current = document.querySelector('#current'),
-        total = document.querySelector('#total'),
-        slides = document.querySelectorAll('.offer__slide'), //slideSelector
-        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-        slidesInner = document.querySelector('.offer__slider-inner'),
+    const prev = document.querySelector(prevSelector),
+        slider = document.querySelector(sliderContainerSelector),
+        next = document.querySelector(nextSelector),
+        current = document.querySelector(currentSelector),
+        total = document.querySelector(totalSelector),
+        slides = document.querySelectorAll(slideSelector),
+        slidesWrapper = document.querySelector(slidesWrapperSelector),
+        slidesInner = document.querySelector(slidesInnerSelector),
         slideWidth = window.getComputedStyle(slides[0]).width,
         prevImg = prev.querySelector('img'),
         nextImg = next.querySelector('img');
